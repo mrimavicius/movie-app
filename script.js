@@ -6,6 +6,7 @@ const IMGPATH = "https://image.tmdb.org/t/p/w1280";
 const main = document.querySelector("main")
 const form = document.querySelector("form")
 const search = document.querySelector("input")
+const span = document.querySelector("span")
 
 
 // Užkrauna populiarius filmus
@@ -20,7 +21,7 @@ form.addEventListener("submit", function(e){
 
     // Jeigu input tuščias, nieko negrąžina
     if(!search.value) return
-    
+
     main.innerHTML = ""
 
     var searchTerm = search.value
@@ -31,6 +32,7 @@ form.addEventListener("submit", function(e){
     .catch(error => console.log(error))
 
     // Išvalo input
+    span.textContent = searchTerm
     search.value = ""
 })
 
@@ -52,5 +54,16 @@ function appendMovieData(data){
         </div>
         `
         main.append(createMovie)
+
+        // Pakeičia spalvas pagal reitingą
+        var rating = createMovie.querySelector("span")
+        if(x.vote_average >= 8){
+            rating.style.color = "green"
+        } else if (x.vote_average >=5){
+            rating.style.color = "orange"
+        } else {
+            rating.style.color = "red"
+        }
+
     })
 }
