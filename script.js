@@ -1,14 +1,41 @@
 "use strict"
 
 const APIURL = "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1&page=1";
+const SEARCHURL = "https://api.themoviedb.org/3/search/movie?&api_key=04c35731a5ee918f014970082a0088b1&query=";
 const IMGPATH = "https://image.tmdb.org/t/p/w1280";
 const main = document.querySelector("main")
+const form = document.querySelector("form")
+const search = document.querySelector("input")
 
+
+// Užkrauna populiarius filmus
 fetch(APIURL)
 .then(res => res.json())
-.then(data => {
+.then(appendMovieData)
+.catch(error => console.log(error))
+
+// Užkrauna filmus pagal search raktažodį
+form.addEventListener("submit", function(e){
+    e.preventDefault()
+
+    // Jeigu input tuščias, nieko negrąžina
+    if(!search.value) return
+    
+    main.innerHTML = ""
+
+    var searchTerm = search.value
+
+    fetch(SEARCHURL + searchTerm)
+    .then(res => res.json())
+    .then(appendMovieData)
+    .catch(error => console.log(error))
+
+    // Išvalo input
+    search.value = ""
+})
+
+function appendMovieData(data){
     const results = data.results
-    console.log(results)
     results.map(x => {
         var createMovie = document.createElement("div")
         createMovie.classList.add("movie")
@@ -21,20 +48,9 @@ fetch(APIURL)
         </div>
         <div class="overview">
             <h3>Overview</h3>
-            <p>Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a
-            super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to
-            discover what it truly means to be Spider-Man.
-            Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a
-            super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to
-            discover what it truly means to be Spider-Man.
-            Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a
-            super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to
-            discover what it truly means to be Spider-Man.</p>
+                <p>${x.overview}</p>
         </div>
         `
         main.append(createMovie)
     })
-
-    console.log(results[0].backdrop_path)
-})
-.catch(error => console.log(error))
+}
